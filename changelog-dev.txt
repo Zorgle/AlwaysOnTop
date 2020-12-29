@@ -1,0 +1,12 @@
+AlwaysOnTop/changelog-dev.txt
+
+2020-12-29
+ Forked from wnipper repo, which was forked from jparnell8839 original repo
+ Octokit was listed twice in packages.config (0.23.0 & 0.24.0); remove older
+ Change target from .NET 4.5.2 to .NET 4.8
+ Update NuGet Octokit from 0.24.0 to 0.48.0
+ Bump version from 0.6.1 to 0.6.3
+ Changed AlwaysOnTop.version from hardcoded 0.6.1 to dynamic fetching from executing assembly version
+ Changed AlwaysOnTop.build from "170118.2106" to "201229.1840"
+ Add changelog-dev.txt (this file)
+ Disabled Check for Update button in FormAbout
