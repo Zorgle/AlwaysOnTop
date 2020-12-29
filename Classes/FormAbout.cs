@@ -10,23 +10,23 @@ using System.Windows.Forms;
 
 namespace AlwaysOnTop.Classes
 {
-	public partial class FormAbout : Form
-	{
-		public FormAbout()
-		{
-			InitializeComponent();
-		}
+    public partial class FormAbout : Form
+    {
+        public FormAbout()
+        {
+            InitializeComponent();
+        }
 
-		private void FormAbout_Load(object sender, EventArgs e)
-		{
-			strVer.Text = AlwaysOnTop.version;
-			strBuild.Text = AlwaysOnTop.build;
-		}
+        private void FormAbout_Load(object sender, EventArgs e)
+        {
+            strVer.Text = AlwaysOnTop.version;
+            strBuild.Text = AlwaysOnTop.build;
+        }
 
-		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			System.Diagnostics.Process.Start("https://github.com/jparnell8839/AlwaysOnTop");
-		}
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/jparnell8839/AlwaysOnTop");
+        }
 
         private void btnCheckUpdate_Click(object sender, EventArgs e)
         {

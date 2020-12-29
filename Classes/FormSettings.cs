@@ -5,31 +5,31 @@ using System.Windows.Forms;
 namespace AlwaysOnTop.Classes
 {
     public partial class FormSettings : Form
-	{
-        
-		string AoTPath = Application.ExecutablePath.ToString();
-		bool MustRestart = false;
-		string HK, PW, modifier, key;
+    {
+
+        string AoTPath = Application.ExecutablePath.ToString();
+        bool MustRestart = false;
+        string HK, PW, modifier, key;
         String[] sHK = new string[2];
         char delim = '+';
 
         int RaL, UHK, CT, UPM, DBN, CUaS, UFE, UF;
 
-		public FormSettings()
-		{
+        public FormSettings()
+        {
             InitializeComponent();
             addEvents(this.Controls);
-		}
+        }
 
-		private void FormSettings_Load(object sender, EventArgs e)
-		{
-			chkTitleContext.Enabled = false;
-			chkPermWindows.Enabled = false;
-			btnSelectWindows.Enabled = false;
-			listPermWindows.Enabled = false;
+        private void FormSettings_Load(object sender, EventArgs e)
+        {
+            chkTitleContext.Enabled = false;
+            chkPermWindows.Enabled = false;
+            btnSelectWindows.Enabled = false;
+            listPermWindows.Enabled = false;
 
-			using (RegistryKey regSettings = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\AlwaysOnTop", true))
-			{
+            using (RegistryKey regSettings = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\AlwaysOnTop", true))
+            {
                 RaL = Methods.TryRegInt(regSettings, "Run at Login", 0, false);
                 UHK = Methods.TryRegInt(regSettings, "Use Hot Key", 0, false);
                 HK = Methods.TryRegString(regSettings, "Hotkey", "", false);
@@ -41,13 +41,13 @@ namespace AlwaysOnTop.Classes
                 UFE = Methods.TryRegInt(regSettings, "Update Frequency Enabled", 0, false);
                 UF = Methods.TryRegInt(regSettings, "Update Frequency", 0, false);
 
-                if (RaL == 1) {	chkRunAtLogin.Checked = true; }
+                if (RaL == 1) { chkRunAtLogin.Checked = true; }
                 if (UHK == 1) { chkHotKey.Checked = true; }
 
                 if (!String.IsNullOrWhiteSpace(HK))
-				{
+                {
                     sHK = HK.Split(delim);
-				}
+                }
                 else
                 {
                     sHK[0] = "";
@@ -66,7 +66,7 @@ namespace AlwaysOnTop.Classes
                     chkUpdateFreq.Checked = true;
                     switch (UF)
                     {
-                        case 1 :
+                        case 1:
                             cmbUpdateFreq.SelectedIndex = 1;
                             break;
                         case 7:
@@ -85,131 +85,131 @@ namespace AlwaysOnTop.Classes
                     cmbUpdateFreq.SelectedIndex = 0;
                 }
 
-			}
+            }
 
-			btnApply.Enabled = false; // Make this one last so a potential change from registry settings doesn't enable it.
-		}
+            btnApply.Enabled = false; // Make this one last so a potential change from registry settings doesn't enable it.
+        }
 
-		private void btnSelectWindows_Click(object sender, EventArgs e)
-		{
-			btnApply.Enabled = true;
-		}
+        private void btnSelectWindows_Click(object sender, EventArgs e)
+        {
+            btnApply.Enabled = true;
+        }
 
-		private void btnClose_Click(object sender, EventArgs e)
-		{
-			this.Dispose();
-		}
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
 
-		private void btnApply_Click(object sender, EventArgs e)
-		{
-			using (RegistryKey regSettings = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\AlwaysOnTop", true))
-			{
-				using (RegistryKey regRunAtLogin = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
-				{
-					#region chkRunAtLogin
-					try
-					{
-						if (chkRunAtLogin.Checked)
-						{
-							regRunAtLogin.SetValue("AlwaysOnTop", AoTPath);
-							Methods.TryRegInt(regSettings, "Run at Login", 1, true);
-						}
-						else
-						{
-							regRunAtLogin.DeleteValue("AlwaysOnTop", false);
-							Methods.TryRegInt(regSettings, "Run at Login", 0, true);
-						}
-					}
-					catch(Exception ex)
-					{
-						MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            using (RegistryKey regSettings = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\AlwaysOnTop", true))
+            {
+                using (RegistryKey regRunAtLogin = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                {
+                    #region chkRunAtLogin
+                    try
+                    {
+                        if (chkRunAtLogin.Checked)
+                        {
+                            regRunAtLogin.SetValue("AlwaysOnTop", AoTPath);
+                            Methods.TryRegInt(regSettings, "Run at Login", 1, true);
+                        }
+                        else
+                        {
+                            regRunAtLogin.DeleteValue("AlwaysOnTop", false);
+                            Methods.TryRegInt(regSettings, "Run at Login", 0, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
-					#endregion
+                    #endregion
 
-					#region chkTitleContext
-					try
-					{
-						if (chkTitleContext.Checked)
-						{
-							Methods.TryRegInt(regSettings, "Use Context Menu", 1, true);
-							// call method to add title bar context menu option on all windows
-						}
-						else
-						{
-							Methods.TryRegInt(regSettings, "Use Context Menu", 0, true);
-							// call method to disable title bar context menu option on all windows
-						}
-					}
-					catch(Exception ex)
-					{
-						MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK,MessageBoxIcon.Error);
-					}
-
-
-					#endregion
-
-					#region chkUseHotKey
-					try
-					{
-						if (chkHotKey.Checked)
-						{
-							Methods.TryRegInt(regSettings, "Use Hot Key", 1, true);
-							MustRestart = true;
-						}
-						else
-						{
-							Methods.TryRegInt(regSettings, "Use Hot Key", 0, true);
-							MustRestart = true;
-						}
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+                    #region chkTitleContext
+                    try
+                    {
+                        if (chkTitleContext.Checked)
+                        {
+                            Methods.TryRegInt(regSettings, "Use Context Menu", 1, true);
+                            // call method to add title bar context menu option on all windows
+                        }
+                        else
+                        {
+                            Methods.TryRegInt(regSettings, "Use Context Menu", 0, true);
+                            // call method to disable title bar context menu option on all windows
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
 
-					#endregion
+                    #endregion
 
-					#region chkPermWindows
-					try
-					{
-						if (chkPermWindows.Checked)
-						{
+                    #region chkUseHotKey
+                    try
+                    {
+                        if (chkHotKey.Checked)
+                        {
+                            Methods.TryRegInt(regSettings, "Use Hot Key", 1, true);
+                            MustRestart = true;
+                        }
+                        else
+                        {
+                            Methods.TryRegInt(regSettings, "Use Hot Key", 0, true);
+                            MustRestart = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
-						}
-						else
-						{
 
-						}
-						
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+                    #endregion
 
-					#endregion
+                    #region chkPermWindows
+                    try
+                    {
+                        if (chkPermWindows.Checked)
+                        {
 
-					#region chkDisableBalloonNotify
-					try
-					{
-						if (chkDisableBalloonNotify.Checked)
-						{
-							Methods.TryRegInt(regSettings, "Disable Balloon Notify", 1, true);
-							MustRestart = true;
-						}
-						else
-						{
-							Methods.TryRegInt(regSettings, "Disable Balloon Notify", 0, true);
-							MustRestart = true;
-						}
+                        }
+                        else
+                        {
 
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    #endregion
+
+                    #region chkDisableBalloonNotify
+                    try
+                    {
+                        if (chkDisableBalloonNotify.Checked)
+                        {
+                            Methods.TryRegInt(regSettings, "Disable Balloon Notify", 1, true);
+                            MustRestart = true;
+                        }
+                        else
+                        {
+                            Methods.TryRegInt(regSettings, "Disable Balloon Notify", 0, true);
+                            MustRestart = true;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred." + Environment.NewLine + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
                     #endregion
 
@@ -284,24 +284,24 @@ namespace AlwaysOnTop.Classes
             }
 
 
-			if (MustRestart)
-			{
-				DialogResult restart = MessageBox.Show("You must restart AlwaysOnTop to apply these settings." + Environment.NewLine +
+            if (MustRestart)
+            {
+                DialogResult restart = MessageBox.Show("You must restart AlwaysOnTop to apply these settings." + Environment.NewLine +
                     "Restart now?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-				switch (restart)
-				{
-					case DialogResult.Yes:
-						Application.Restart();
-						break;
-					case DialogResult.No:
+                switch (restart)
+                {
+                    case DialogResult.Yes:
+                        Application.Restart();
+                        break;
+                    case DialogResult.No:
                         MessageBox.Show("Settings will take effect the next time you start AlwaysOnTop", "You sure about that?", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						break;
-					default:
-						break;
-				}
-			}
-			btnApply.Enabled = false;
-		}
+                        break;
+                    default:
+                        break;
+                }
+            }
+            btnApply.Enabled = false;
+        }
 
         private void btnSetHotkey_Click(object sender, EventArgs e)
         {
@@ -313,7 +313,7 @@ namespace AlwaysOnTop.Classes
 
         private void addEvents(Control.ControlCollection controls)
         {
-            foreach(Control c in controls)
+            foreach (Control c in controls)
             {
                 if (c is CheckBox)
                     ((CheckBox)c).CheckedChanged += new EventHandler(EnableApplyButton);
@@ -324,5 +324,5 @@ namespace AlwaysOnTop.Classes
         {
             btnApply.Enabled = true;
         }
-	}
+    }
 }

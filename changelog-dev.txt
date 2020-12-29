@@ -10,3 +10,4 @@ AlwaysOnTop/changelog-dev.txt
  Changed AlwaysOnTop.build from "170118.2106" to "201229.1840"
  Add changelog-dev.txt (this file)
  Disabled Check for Update button in FormAbout
+ Format document using default Visual Studio settings on source files with mixed indents

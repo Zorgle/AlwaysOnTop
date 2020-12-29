@@ -12,18 +12,18 @@ using System.Threading;
 
 namespace AlwaysOnTop
 {
-	public partial class AlwaysOnTop : Form
-	{
-		public static string version { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
-		public const string build = "201229.1840";
-		
-		public AlwaysOnTop()
-		{
-			InitializeComponent();
-		}
-	}
+    public partial class AlwaysOnTop : Form
+    {
+        public static string version { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
+        public const string build = "201229.1840";
 
-	public class AlwaysOnTopApplicationContext : ApplicationContext
+        public AlwaysOnTop()
+        {
+            InitializeComponent();
+        }
+    }
+
+    public class AlwaysOnTopApplicationContext : ApplicationContext
     {
         #region icon and cursor dependencies
         [DllImport("user32.dll")]
@@ -51,9 +51,9 @@ namespace AlwaysOnTop
             Week = 7,
             Month = 30
         }
-        
+
         public string skey;
-		public Keys kMod, key;
+        public Keys kMod, key;
 
         globalKeyboardHook GKH
         { get; set; }
@@ -71,76 +71,76 @@ namespace AlwaysOnTop
         }
 
         //Once I figure out what all of these do, I'll rename them or at least add sumtags for them.
-		string AoTBuild, IP, HK, PW;
-		int RaL, UHK, CT, UPM, DBN, CUaS, UFE, UF;
+        string AoTBuild, IP, HK, PW;
+        int RaL, UHK, CT, UPM, DBN, CUaS, UFE, UF;
         DateTime LU;
         string AoTPath = Application.ExecutablePath.ToString();
 
-		public AlwaysOnTopApplicationContext(string[] args)
+        public AlwaysOnTopApplicationContext(string[] args)
         {
             getRegistrySettings();
 
-			try
-			{
+            try
+            {
                 createAndShowTrayIcon();
                 getOrCreateGlobalKeyboardHook();
-                
+
                 //I'm not actually sure what was intended here.  Future feature is the only thing I can think of.
-                if (CT == 1) { /* call method to enabled titlebar context menu*/ }				
-				if (UPM == 1) { /* call method to enabled titlebar context menu*/ }
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.ToString());
-				Xit(this,null);
-			}
+                if (CT == 1) { /* call method to enabled titlebar context menu*/ }
+                if (UPM == 1) { /* call method to enabled titlebar context menu*/ }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                Xit(this, null);
+            }
 
             Application.ApplicationExit += new EventHandler(this.OnApplicationExit);
         }
 
         void keyup_hook(object sender, KeyEventArgs e)
-		{
-			if (e.Modifiers == kMod && e.KeyCode == key)
+        {
+            if (e.Modifiers == kMod && e.KeyCode == key)
             {
                 string winTitle = Methods.GetWindowTitle();
-				if (DBN != 1)
-				{
+                if (DBN != 1)
+                {
                     TrayIcon.ShowBalloonTip(500, "AlwaysOnTop", "Running AlwaysOnTop on " + winTitle, ToolTipIcon.Info);
-				}
+                }
 
-				bool isOnTop = false;
-				if (winTitle.Contains(" - AlwaysOnTop")) isOnTop = true;
-				if (isOnTop)
-					Methods.AoT_off(winTitle);
-				else
-					Methods.AoT_on(winTitle);
+                bool isOnTop = false;
+                if (winTitle.Contains(" - AlwaysOnTop")) isOnTop = true;
+                if (isOnTop)
+                    Methods.AoT_off(winTitle);
+                else
+                    Methods.AoT_on(winTitle);
 
-				e.Handled = true;
-    		}
-	    }
+                e.Handled = true;
+            }
+        }
 
-		private void TrayIcon_Click(object sender, EventArgs e)
-		{
-			MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+        private void TrayIcon_Click(object sender, EventArgs e)
+        {
+            MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
             mi.Invoke(TrayIcon, null);
-		}
+        }
 
-		public static void Settings(object sender, EventArgs e)
-		{
+        public static void Settings(object sender, EventArgs e)
+        {
             FormSettings settings = new FormSettings();
             settings.ShowDialog();
-		}
-		void HelpBox(object sender, EventArgs e)
-		{
-			FormHelp help = new FormHelp();
-			help.ShowDialog();
-		} 
+        }
+        void HelpBox(object sender, EventArgs e)
+        {
+            FormHelp help = new FormHelp();
+            help.ShowDialog();
+        }
 
-		void AboutBox(object sender, EventArgs e)
-		{
-			FormAbout about = new FormAbout();
-			about.ShowDialog();
-		}
+        void AboutBox(object sender, EventArgs e)
+        {
+            FormAbout about = new FormAbout();
+            about.ShowDialog();
+        }
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
@@ -148,10 +148,10 @@ namespace AlwaysOnTop
             GKH.unhook();
         }
 
-		public void Xit(object sender, EventArgs e)
-		{
+        public void Xit(object sender, EventArgs e)
+        {
             Application.Exit();
-		}
+        }
 
         public static void RevertCursor()
         { revertCursors(); }
@@ -161,7 +161,7 @@ namespace AlwaysOnTop
             string winTitle = grabWindowTitle();
 
             bool isOnTop = false;
-            if (winTitle.Contains(" - AlwaysOnTop")) 
+            if (winTitle.Contains(" - AlwaysOnTop"))
                 isOnTop = true;
 
             if (isOnTop)
@@ -293,5 +293,5 @@ namespace AlwaysOnTop
                 GKH = new globalKeyboardHook();
             }
         }
-	}
+    }
 }
