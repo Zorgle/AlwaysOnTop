@@ -125,7 +125,7 @@ namespace AlwaysOnTop.Classes
             return val != 0;
         }
 
-        public static void AoT_on(string title)
+        public static void AoT_on_old_unused(string title)
         {
             Process[] processes = Process.GetProcesses(".");
             foreach (var process in processes)
@@ -144,7 +144,7 @@ namespace AlwaysOnTop.Classes
             }
         }
 
-        public static void AoT_off(string title)
+        public static void AoT_off_old_unused(string title)
         {
             Process[] processes = Process.GetProcesses(".");
             foreach (var process in processes)
