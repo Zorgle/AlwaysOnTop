@@ -108,12 +108,7 @@ namespace AlwaysOnTop
                     TrayIcon.ShowBalloonTip(500, "AlwaysOnTop", "Running AlwaysOnTop on " + winTitle, ToolTipIcon.Info);
                 }
 
-                bool isOnTop = false;
-                if (winTitle.Contains(" - AlwaysOnTop")) isOnTop = true;
-                if (isOnTop)
-                    Methods.AoT_off(winTitle);
-                else
-                    Methods.AoT_on(winTitle);
+                Methods.AoT_toggle(winTitle);
 
                 e.Handled = true;
             }
@@ -160,14 +155,7 @@ namespace AlwaysOnTop
         {
             string winTitle = grabWindowTitle();
 
-            bool isOnTop = false;
-            if (winTitle.Contains(" - AlwaysOnTop"))
-                isOnTop = true;
-
-            if (isOnTop)
-                Methods.AoT_off(winTitle);
-            else
-                Methods.AoT_on(winTitle);
+            Methods.AoT_toggle(winTitle);
         }
 
         static string grabWindowTitle()

@@ -11,3 +11,5 @@ AlwaysOnTop/changelog-dev.txt
  Add changelog-dev.txt (this file)
  Disabled Check for Update button in FormAbout
  Format document using default Visual Studio settings on source files with mixed indents
+ Replace Aot_on and Aot_off with Aot_toggle which checks current state
+  (b/c title change was not persisting, so not reliable to detect)

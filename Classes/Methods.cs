@@ -28,6 +28,12 @@ namespace AlwaysOnTop.Classes
 
         [DllImport("user32.dll")]
         static extern bool SetWindowText(IntPtr hWnd, string text);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        private static extern IntPtr GetWindowLongPtr32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
         #endregion
 
         #region consts
@@ -49,7 +55,28 @@ namespace AlwaysOnTop.Classes
         const int SWP_NOACTIVATE = 0x0010;
         const int HWND_TOPMOST = -1;
         const int HWND_NOTOPMOST = -2;
+        const long WS_EX_TOPMOST = 0x00000008L;
+        public enum GWL
+        {
+            GWL_WNDPROC = (-4),
+            GWL_HINSTANCE = (-6),
+            GWL_HWNDPARENT = (-8),
+            GWL_STYLE = (-16),
+            GWL_EXSTYLE = (-20),
+            GWL_USERDATA = (-21),
+            GWL_ID = (-12)
+        }
         #endregion
+
+        // This static method is required because Win32 does not support
+        // GetWindowLongPtr directly
+        public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
+        {
+            if (IntPtr.Size == 8)
+                return GetWindowLongPtr64(hWnd, nIndex);
+            else
+                return GetWindowLongPtr32(hWnd, nIndex);
+        }
 
         public static String GetWindowTitle()
         {
@@ -66,6 +93,36 @@ namespace AlwaysOnTop.Classes
                 }
             }
             return null;
+        }
+        public static void AoT_toggle(string title)
+        {
+            const string suffix = " - AlwaysOnTop";
+
+            IntPtr handle = GetForegroundWindow();
+            if (handle != IntPtr.Zero)
+            {
+                bool wasTopMost = IsWindowTopmost(handle);
+                if (wasTopMost)
+                {
+                    SetWindowPos(handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+                    if (title.EndsWith(suffix))
+                    {
+                        var newTitle = title.Substring(title.Length - suffix.Length);
+                        SetWindowText(handle, newTitle);
+                    }
+                }
+                else
+                {
+                    SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+                    var newTitle = title + suffix;
+                    SetWindowText(handle, newTitle);
+                }
+            }
+        }
+        public static bool IsWindowTopmost(IntPtr handle)
+        {
+            var val = (long)GetWindowLongPtr(handle, (int)GWL.GWL_EXSTYLE) & WS_EX_TOPMOST;
+            return val != 0;
         }
 
         public static void AoT_on(string title)
